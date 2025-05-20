@@ -1,14 +1,19 @@
 package se.su.inlupp;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class ListGraph<T> implements Graph<T> {
 
+  private final Map<T, Set<Edge<T>>> nodes = new HashMap<>();
+
   @Override
   public void add(T node) {
-    throw new UnsupportedOperationException("Unimplemented method 'add'");
+    nodes.putIfAbsent(node, new HashSet<>());
   }
 
   @Override
