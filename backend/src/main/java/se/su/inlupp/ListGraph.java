@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 public class ListGraph<T> implements Graph<T> {
@@ -32,8 +33,12 @@ public class ListGraph<T> implements Graph<T> {
   }
 
   @Override
-  public Collection<Edge<T>> getEdgesFrom(T node) {
-    throw new UnsupportedOperationException("Unimplemented method 'getEdgesFrom'");
+  public Collection<Edge<T>> getEdgesFrom(T node) throws NoSuchElementException{
+    if(nodes.containsKey(node)){
+      return new HashSet<>(nodes.get(node));
+    }else{
+      throw new NoSuchElementException();
+    }
   }
 
   @Override
