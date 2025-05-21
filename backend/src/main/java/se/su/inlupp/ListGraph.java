@@ -38,13 +38,23 @@ public class ListGraph<T> implements Graph<T> {
     if (nodes.containsKey(node)) {
       return new HashSet<>(nodes.get(node));
     } else {
-      throw new NoSuchElementException();
+      throw new NoSuchElementException(); // checked exception
     }
   }
 
   @Override
-  public Edge<T> getEdgeBetween(T node1, T node2) {
-    throw new UnsupportedOperationException("Unimplemented method 'getEdgeBetween'");
+  public Edge<T> getEdgeBetween(T node1, T node2) throws NoSuchElementException {
+    if (nodes.containsKey(node2)) {
+      Collection<Edge<T>> edges1 = getEdgesFrom(node1);
+      for (Edge<T> edge : edges1) {
+        if (edge.getDestination().equals(node2)) {
+          return edge;
+        }
+      }
+    } else{
+      throw new NoSuchElementException();
+    }
+    return null;
   }
 
   @Override
@@ -59,7 +69,7 @@ public class ListGraph<T> implements Graph<T> {
       T destination = edge.getDestination();
       disconnect(node, destination);
     }
-    //nodes.remove(node); 
+    // nodes.remove(node);
   }
 
   @Override
