@@ -33,10 +33,11 @@ public class ListGraph<T> implements Graph<T> {
   }
 
   @Override
-  public Collection<Edge<T>> getEdgesFrom(T node) throws NoSuchElementException{
-    if(nodes.containsKey(node)){
+  public Collection<Edge<T>> getEdgesFrom(T node) throws NoSuchElementException {
+    // Objects.requireNonNull(node, "null är inte en giltig nod");
+    if (nodes.containsKey(node)) {
       return new HashSet<>(nodes.get(node));
-    }else{
+    } else {
       throw new NoSuchElementException();
     }
   }
@@ -52,8 +53,13 @@ public class ListGraph<T> implements Graph<T> {
   }
 
   @Override
-  public void remove(T node) {
-    throw new UnsupportedOperationException("Unimplemented method 'remove'");
+  public void remove(T node) throws NoSuchElementException {
+    Collection<Edge<T>> edges = getEdgesFrom(node);
+    for (Edge<T> edge : edges) {
+      T destination = edge.getDestination();
+      disconnect(node, destination);
+    }
+    //nodes.remove(node); 
   }
 
   @Override
