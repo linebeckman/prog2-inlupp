@@ -51,7 +51,7 @@ public class ListGraph<T> implements Graph<T> {
           return edge;
         }
       }
-    } else{
+    } else {
       throw new NoSuchElementException();
     }
     return null;
@@ -59,7 +59,16 @@ public class ListGraph<T> implements Graph<T> {
 
   @Override
   public void disconnect(T node1, T node2) {
-    throw new UnsupportedOperationException("Unimplemented method 'disconnect'");
+    Edge<T> edgeTo2 = getEdgeBetween(node1, node2);
+    Edge<T> edgeTo1 = getEdgeBetween(node2, node1);
+    if (edgeTo2 == null || edgeTo1 == null) {
+      throw new IllegalStateException();
+    } else {
+      Set<Edge<T>> edges1 = nodes.get(node1);
+      edges1.remove(edgeTo2);
+      Set<Edge<T>> edges2 = nodes.get(node2);
+      edges2.remove(edgeTo1);
+    }
   }
 
   @Override
