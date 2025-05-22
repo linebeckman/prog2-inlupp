@@ -42,8 +42,11 @@ public class ListGraph<T> implements Graph<T> {
   }
 
   @Override
-  public void setConnectionWeight(T node1, T node2, int weight) {
-    throw new UnsupportedOperationException("Unimplemented method 'setConnectionWeight'");
+  public void setConnectionWeight(T node1, T node2, int weight) throws NoSuchElementException {
+    Edge<T> edgeTo2 = getEdgeBetween(node1, node2);
+    edgeTo2.setWeight(weight);
+    Edge<T> edgeTo1 = getEdgeBetween(node2, node1);
+    edgeTo1.setWeight(weight);
   }
 
   @Override
