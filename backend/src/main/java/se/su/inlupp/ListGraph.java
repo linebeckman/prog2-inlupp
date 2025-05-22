@@ -6,20 +6,39 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Set;
 
 public class ListGraph<T> implements Graph<T> {
 
   private final Map<T, Set<Edge<T>>> nodes = new HashMap<>();
 
+  // private boolean containsNodePair(T node1, T node2){
+  //   return nodes.containsKey(node1) && nodes.containsKey(node2);
+  // }
+
   @Override
   public void add(T node) {
+    Objects.requireNonNull(node, "Null är ingen nod!");
     nodes.putIfAbsent(node, new HashSet<>());
   }
 
   @Override
-  public void connect(T node1, T node2, String name, int weight) {
-    throw new UnsupportedOperationException("Unimplemented method 'connect'");
+  public void connect(T node1, T node2, String name, int weight) throws NoSuchElementException {
+    if(nodes.containsKey(node1) && nodes.containsKey(node2)){
+      // TODO: testa att ersätta sökning efter existerande kant med en överskuggad equals och hashcode i ListEdge
+      // OBS: kontrollerar om kant finns från node1 till node2, bör räcka så länge det bara går att lägga till oriktade förbindelser
+      Collection<Edge<T>> edges1 = getEdgesFrom(node1);
+      for (Edge<T> edge : edges1) {
+        if(edge.getDestination().equals(node2)){
+          throw new IllegalStateException();
+        } 
+      }  
+      nodes.get(node1).add(new ListEdge<>(node2, name, weight));
+      nodes.get(node2).add(new ListEdge<>(node1, name, weight));
+    } else {
+      throw new NoSuchElementException();
+    }
   }
 
   @Override
@@ -34,7 +53,6 @@ public class ListGraph<T> implements Graph<T> {
 
   @Override
   public Collection<Edge<T>> getEdgesFrom(T node) throws NoSuchElementException {
-    // Objects.requireNonNull(node, "null är inte en giltig nod");
     if (nodes.containsKey(node)) {
       return new HashSet<>(nodes.get(node));
     } else {
@@ -52,7 +70,7 @@ public class ListGraph<T> implements Graph<T> {
         }
       }
     } else {
-      throw new NoSuchElementException();
+      throw new NoSuchElementException(); // saknas
     }
     return null;
   }
@@ -62,7 +80,7 @@ public class ListGraph<T> implements Graph<T> {
     Edge<T> edgeTo2 = getEdgeBetween(node1, node2);
     Edge<T> edgeTo1 = getEdgeBetween(node2, node1);
     if (edgeTo2 == null || edgeTo1 == null) {
-      throw new IllegalStateException();
+      throw new IllegalStateException(); // kant saknas mellan noder
     } else {
       Set<Edge<T>> edges1 = nodes.get(node1);
       edges1.remove(edgeTo2);
@@ -78,7 +96,7 @@ public class ListGraph<T> implements Graph<T> {
       T destination = edge.getDestination();
       disconnect(node, destination);
     }
-    // nodes.remove(node);
+    nodes.remove(node);
   }
 
   @Override
