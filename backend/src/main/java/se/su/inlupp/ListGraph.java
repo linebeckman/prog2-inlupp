@@ -3,6 +3,7 @@ package se.su.inlupp;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -14,7 +15,7 @@ public class ListGraph<T> implements Graph<T> {
   private final Map<T, Set<Edge<T>>> nodes = new HashMap<>();
 
   // private boolean containsNodePair(T node1, T node2){
-  //   return nodes.containsKey(node1) && nodes.containsKey(node2);
+  // return nodes.containsKey(node1) && nodes.containsKey(node2);
   // }
 
   @Override
@@ -25,15 +26,17 @@ public class ListGraph<T> implements Graph<T> {
 
   @Override
   public void connect(T node1, T node2, String name, int weight) throws NoSuchElementException {
-    if(nodes.containsKey(node1) && nodes.containsKey(node2)){
-      // TODO: testa att ersätta sökning efter existerande kant med en överskuggad equals och hashcode i ListEdge
-      // OBS: kontrollerar om kant finns från node1 till node2, bör räcka så länge det bara går att lägga till oriktade förbindelser
+    if (nodes.containsKey(node1) && nodes.containsKey(node2)) {
+      // TODO: testa att ersätta sökning efter existerande kant med en överskuggad
+      // equals och hashcode i ListEdge
+      // OBS: kontrollerar om kant finns från node1 till node2, bör räcka så länge det
+      // bara går att lägga till oriktade förbindelser
       Collection<Edge<T>> edges1 = getEdgesFrom(node1);
       for (Edge<T> edge : edges1) {
-        if(edge.getDestination().equals(node2)){
+        if (edge.getDestination().equals(node2)) {
           throw new IllegalStateException();
-        } 
-      }  
+        }
+      }
       nodes.get(node1).add(new ListEdge<>(node2, name, weight));
       nodes.get(node2).add(new ListEdge<>(node1, name, weight));
     } else {
@@ -112,7 +115,7 @@ public class ListGraph<T> implements Graph<T> {
     return stringBuilder.toString();
   }
 
-@Override
+  @Override
   public boolean pathExists(T from, T to) {
     // finns angivna noder i grafen?
     if (nodes.containsKey(from) && nodes.containsKey(to)) {
@@ -147,6 +150,30 @@ public class ListGraph<T> implements Graph<T> {
 
   @Override
   public List<Edge<T>> getPath(T from, T to) {
-    throw new UnsupportedOperationException("Unimplemented method 'getPath'");
+    Map<T, T> connection = new HashMap<>();
+    recursiveConnect(from, null, connection); // spara ned alla kopplingar man kan hitta genom att följa kanter från
+                                              // startnoden (from)
+
+    LinkedList<Edge<T>> path = new LinkedList<>();
+    T current = to; // börja från slutnoden som vald nod
+    while (current != null && !current.equals(from)) { // medan vi inte nåt startnoden eller och vi hittat kopplingar
+                                                       // till vald nod
+      T next = connection.get(current); // hämta nästa nod på vägen till start enligt hittade kopplingar
+      if (next != null) { // getEdgeBetween ger felmeddelande om null inte är en nyckel i nodes
+        Edge<T> edge = getEdgeBetween(next, current); // hämta kant mellan den ett steg närmare startnoden vald nod
+        path.addFirst(edge); // lägg kanter på varandra ("stacka dem")
+      }
+      current = next;
+    }
+    return current == null ? null : path; // om noden vi kommit till är null så finns ingen
+  }
+
+  private void recursiveConnect(T to, T from, Map<T, T> connection) {
+    connection.put(to, from);
+    for (Edge<T> edge : getEdgesFrom(to)) {
+      if (!connection.containsKey(edge.getDestination())) {
+        recursiveConnect(edge.getDestination(), to, connection);
+      }
+    }
   }
 }
