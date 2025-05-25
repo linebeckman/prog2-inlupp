@@ -102,9 +102,37 @@ public class ListGraph<T> implements Graph<T> {
     nodes.remove(node);
   }
 
-  @Override
+@Override
   public boolean pathExists(T from, T to) {
-    throw new UnsupportedOperationException("Unimplemented method 'pathExists'");
+    // finns angivna noder i grafen?
+    if (nodes.containsKey(from) && nodes.containsKey(to)) {
+      Set<T> visited = new HashSet<>(); // vill inte besöka redan besökta noder
+      return isAPath(from, to, visited);
+      // return !(getPath(from, to) == null);
+    }
+    return false;
+  }
+
+  private boolean isAPath(T from, T to, Set<T> visited) {
+    visited.add(from); // markera noden som besökt
+    if (from.equals(to)) { // Är noden den vi söker?
+      return true;
+    }
+    // för varje granne som är ansluten via en kant till noden
+    for (Edge<T> edge : getEdgesFrom(from)) {
+      // Har vi inte redan besökt grannen tidigare?
+      if (!visited.contains(edge.getDestination())) {
+        // rekursivt anrop, besök granne och se om vägen via denna leder till sökta
+        // noden
+        if (isAPath(edge.getDestination(), to, visited)) {
+          return true;
+        }
+      }
+      // vägen ledde inte till den sökta noden, hitta nästa kant till en obesökt
+      // granne
+    }
+    // ingen av vägar via den här nodens grannar leder till sökta noden
+    return false;
   }
 
   @Override
