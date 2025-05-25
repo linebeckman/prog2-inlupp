@@ -102,6 +102,16 @@ public class ListGraph<T> implements Graph<T> {
     nodes.remove(node);
   }
 
+  @Override
+  public String toString() {
+    StringBuilder stringBuilder = new StringBuilder("Graf");
+    stringBuilder.append("\n");
+    for (Map.Entry<T, Set<Edge<T>>> mapEntry : nodes.entrySet()) {
+      stringBuilder.append(mapEntry.getKey()).append(": ").append(mapEntry.getValue()).append("\n");
+    }
+    return stringBuilder.toString();
+  }
+
 @Override
   public boolean pathExists(T from, T to) {
     // finns angivna noder i grafen?
