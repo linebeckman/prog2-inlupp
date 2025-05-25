@@ -27,6 +27,9 @@ public class ListGraph<T> implements Graph<T> {
   @Override
   public void connect(T node1, T node2, String name, int weight) throws NoSuchElementException {
     if (nodes.containsKey(node1) && nodes.containsKey(node2)) {
+      if(weight < 0) {
+        throw new IllegalArgumentException();
+      }
       // TODO: testa att ersätta sökning efter existerande kant med en överskuggad
       // equals och hashcode i ListEdge
       // OBS: kontrollerar om kant finns från node1 till node2, bör räcka så länge det

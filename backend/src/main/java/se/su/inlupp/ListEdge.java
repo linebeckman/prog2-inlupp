@@ -40,7 +40,7 @@ public class ListEdge<T> implements Edge<T>{
 
     @Override
     public String toString(){
-        return "ListEdge[destination=" + destination + ", name=" + name + " weight=" + weight + "]";
+        return "till " + destination + " med " + name + " tar " + weight;
     }
 
     // @Override
