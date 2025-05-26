@@ -10,7 +10,11 @@ public class ListEdge<T> implements Edge<T>{
     public ListEdge(T destination, String name, int weight){
         this.destination = destination;
         this.name = name;
-        this.weight = weight;
+        if(weight < 0) {
+            throw new IllegalArgumentException(); // unchecked exception, negativ vikt
+        } else{
+            this.weight = weight;
+        }
     }
 
     @Override

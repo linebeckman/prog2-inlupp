@@ -23,9 +23,6 @@ public class ListGraph<T> implements Graph<T> {
   @Override
   public void connect(T node1, T node2, String name, int weight) throws NoSuchElementException {
     if (nodes.containsKey(node1) && nodes.containsKey(node2)) {
-      if(weight < 0) {
-        throw new IllegalArgumentException(); // unchecked exception, negativ vikt
-      }
       // OBS: kontrollerar om kant finns från node1 till node2, bör räcka så länge det
       // bara går att lägga till oriktade förbindelser
       Collection<Edge<T>> edges1 = getEdgesFrom(node1);
